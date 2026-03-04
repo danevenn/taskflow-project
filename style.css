@@ -1,0 +1,252 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --background-color: #f8f9fa;
+    --text-color: #333;
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 32px;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.layout-wrapper {
+    display: flex;
+    flex: 1;
+    /* Permite que ocupe todo el espacio restante despues del header y footer */
+    flex-direction: row;
+    /* Diseño por defecto: sidebar al lado del main */
+}
+
+/* Algunos estilos básicos usando las variables para que veas cómo se aplican */
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: var(--spacing-md);
+}
+
+main {
+    padding: var(--spacing-lg);
+    flex: 1;
+    /* Main grows to fill available space */
+}
+
+section {
+    margin-bottom: var(--spacing-lg);
+}
+
+aside {
+    background-color: #f1f5f9;
+    color: var(--text-color);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg);
+    border-radius: var(--spacing-sm);
+    width: 250px;
+    /* Ancho fijo para barra lateral en desktop */
+    border: 1px solid #ddd;
+}
+
+/* Flexbox Task List */
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    border: 1px solid #ddd;
+    border-radius: var(--spacing-sm);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-title {
+    flex-grow: 1;
+    /* Esto hace que el título ocupe el espacio disponible */
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.task-category {
+    margin-right: var(--spacing-md);
+    color: var(--secondary-color);
+    font-size: 0.9em;
+    background-color: #eee;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.task-badge {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: white;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.badge-high {
+    background-color: #e74c3c;
+    /* Rojo para prioridad alta */
+}
+
+.badge-low {
+    background-color: #2ecc71;
+    /* Verde para prioridad baja */
+}
+
+/* Responsiveness for mobile devices */
+@media screen and (max-width: 768px) {
+
+    /* Stack layout wrapper vertically */
+    .layout-wrapper {
+        flex-direction: column;
+    }
+
+    /* Ajustes generales */
+    main {
+        padding: var(--spacing-md);
+    }
+
+    aside {
+        margin: var(--spacing-md);
+        width: auto;
+        /* Resetear ancho de aside en móvil */
+    }
+
+    /* Stack list items vertically on small screens */
+    .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .task-category {
+        margin-right: 0;
+        margin-bottom: var(--spacing-sm);
+    }
+}
+
+/* Formularios y Filtros */
+.task-form {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.task-form input,
+.task-form select,
+.filter-group input {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid #ddd;
+    border-radius: var(--spacing-sm);
+    flex: 1;
+    min-width: 150px;
+}
+
+.task-form button,
+.filter-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--spacing-sm);
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.task-form button:hover,
+.filter-btn:hover {
+    background-color: #2980b9;
+}
+
+.filter-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.filter-group label,
+.filter-group p {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: bold;
+}
+
+.filter-group input {
+    width: calc(100% - 32px);
+}
+
+.category-filters {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.filter-btn {
+    width: 100%;
+    text-align: left;
+    background-color: transparent;
+    color: var(--text-color);
+    border: 1px solid #ddd;
+}
+
+.filter-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Borrar Tareas */
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: var(--spacing-md);
+    padding: 0;
+    transition: opacity 0.2s;
+    opacity: 0.7;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+}
+
+.badge-medium {
+    background-color: #f39c12;
+    /* Naranja para prioridad media */
+}

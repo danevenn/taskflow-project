@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskflow Project</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Taskflow Project</h1>
+    </header>
+
+    <div class="layout-wrapper">
+        <main>
+            <section>
+                <h2>Objetivo</h2>
+                <p>Página web disponibilizada para la gestión de proyectos y tareas</p>
+            </section>
+
+            <section>
+                <h2>Novedades</h2>
+                <article>
+                    <h3>Últimas tareas añadidas</h3>
+                    <p>Se han añadido <strong id="recentTasksCount">0</strong> nuevas tareas en los últimos 3 días</p>
+                    <ul class="task-list recent-tasks-list" id="recentTasksList">
+                        <!-- Las 3 últimas tareas se cargarán aquí -->
+                    </ul>
+                    <details id="moreRecentTasksContainer" style="display: none; margin-top: var(--spacing-sm);">
+                        <summary style="cursor: pointer; color: var(--primary-color); font-weight: bold;">Ver más tareas
+                            recientes...</summary>
+                        <ul class="task-list recent-tasks-list" id="moreRecentTasksList"
+                            style="margin-top: var(--spacing-sm);">
+                            <!-- Resto de tareas recientes -->
+                        </ul>
+                    </details>
+                </article>
+            </section>
+
+            <section class="task-section">
+                <h2>Lista de Tareas</h2>
+
+                <form id="taskForm" class="task-form">
+                    <input type="text" id="newTaskTitle" placeholder="Título de la tarea" required>
+                    <select id="newTaskCategory" required>
+                        <option value="Trabajo">Trabajo</option>
+                        <option value="Formación">Formación</option>
+                        <option value="Equipo">Equipo</option>
+                    </select>
+                    <select id="newTaskPriority" required>
+                        <option value="Alta">Alta</option>
+                        <option value="Media">Media</option>
+                        <option value="Baja">Baja</option>
+                    </select>
+                    <button type="submit">Añadir Tarea</button>
+                </form>
+
+                <ul class="task-list" id="taskList">
+                    <!-- Las tareas se cargarán aquí dinámicamente -->
+                </ul>
+            </section>
+        </main>
+
+        <aside>
+            <h3>Filtros y Búsqueda</h3>
+
+            <div class="filter-group">
+                <label for="searchInput">Buscar tarea:</label>
+                <input type="text" id="searchInput" placeholder="Escribe para buscar..." />
+            </div>
+
+            <div class="filter-group">
+                <p>Categorías:</p>
+                <ul class="category-filters" id="categoryFilters">
+                    <li><button class="filter-btn active" data-category="Todas">Todas</button></li>
+                    <li><button class="filter-btn" data-category="Trabajo">Trabajo</button></li>
+                    <li><button class="filter-btn" data-category="Formación">Formación</button></li>
+                    <li><button class="filter-btn" data-category="Equipo">Equipo</button></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
