@@ -1,12 +1,6 @@
-Esta página web es un ejemplo de una página web con un listado de tareas.
-
-Se puede agregar una tarea nueva, marcar una tarea como completada y eliminar una tarea.
-Además, se puede filtrar el listado de tareas por prioridad y tipo.
-Incluye un apartado de novedades para visualizar las últimas 5 tareas agregadas.
-
 ## Tecnologías Utilizadas
-- **HTML5 & Vanilla JavaScript**
-- **Tailwind CSS v4** para el estilado (con soporte para modo oscuro)
+- **HTML5 & JavaScript**
+- **Tailwind CSS v4** para el estilado
 - **Local Storage** para la persistencia de datos
 
 ## Instalación y Desarrollo
@@ -39,5 +33,5 @@ Este proyecto utiliza el CLI de Tailwind CSS v4 para compilar los estilos de for
 - `index.html`: Estructura principal, con clases de Tailwind.
 - `app.js`: Lógica de la aplicación y generación dinámica de elementos.
 - `input.css`: Archivo de entrada de configuraciones globales de Tailwind (@theme).
-- `style.css`: Estilos de salida **autogenerados** por el CLI de Tailwind (¡no debe editarse manualmente!).
+- `style.css`: Estilos de salida **autogenerados** por el CLI de Tailwind.
 - `tailwind.config.js`: Archivo de configuración auxiliar para extender el tema de Tailwind.
