@@ -8,77 +8,103 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
-    <header>
-        <h1>Taskflow Project</h1>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
+    <header class="bg-blue-600 dark:bg-blue-800 text-white p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-2xl font-bold">Taskflow Project</h1>
+        <button id="themeToggle" class="p-2 bg-blue-700 dark:bg-slate-700 hover:bg-blue-800 dark:hover:bg-slate-600 rounded-lg transition-colors focus:ring-2 focus:ring-white" aria-label="Toggle Dark Mode">
+            <svg id="themeIconDark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            <svg id="themeIconLight" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        </button>
     </header>
 
-    <div class="layout-wrapper">
-        <main>
-            <section>
-                <h2>Objetivo</h2>
-                <p>Página web disponibilizada para la gestión de proyectos y tareas</p>
+    <div class="flex-1 flex flex-col md:flex-row w-full max-w-7xl mx-auto">
+        <main class="flex-1 p-4 md:p-8 space-y-8">
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-2">Objetivo</h2>
+                <p class="text-slate-600 dark:text-slate-300">Página web disponibilizada para la gestión de proyectos y tareas</p>
             </section>
 
-            <section>
-                <h2>Novedades</h2>
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4">Novedades</h2>
                 <article>
-                    <h3>Últimas tareas añadidas</h3>
-                    <p>Se han añadido <strong id="recentTasksCount">0</strong> nuevas tareas en los últimos 3 días</p>
-                    <ul class="task-list recent-tasks-list" id="recentTasksList">
+                    <h3 class="text-lg font-semibold mb-2">Últimas tareas añadidas</h3>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4">Se han añadido <strong id="recentTasksCount" class="text-blue-600 dark:text-blue-400">0</strong> nuevas tareas en los últimos 3 días</p>
+                    <ul class="space-y-3" id="recentTasksList">
                         <!-- Las 3 últimas tareas se cargarán aquí -->
                     </ul>
-                    <details id="moreRecentTasksContainer" style="display: none; margin-top: var(--spacing-sm);">
-                        <summary style="cursor: pointer; color: var(--primary-color); font-weight: bold;">Ver más tareas
-                            recientes...</summary>
-                        <ul class="task-list recent-tasks-list" id="moreRecentTasksList"
-                            style="margin-top: var(--spacing-sm);">
+                    <details id="moreRecentTasksContainer" class="mt-4 hidden group">
+                        <summary class="cursor-pointer text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300 transition-colors list-none flex items-center gap-2">
+                            <span>Ver más tareas recientes</span>
+                            <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <ul class="space-y-3 mt-3" id="moreRecentTasksList">
                             <!-- Resto de tareas recientes -->
                         </ul>
                     </details>
                 </article>
             </section>
 
-            <section class="task-section">
-                <h2>Lista de Tareas</h2>
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4">Lista de Tareas</h2>
 
-                <form id="taskForm" class="task-form">
-                    <input type="text" id="newTaskTitle" placeholder="Título de la tarea" required>
-                    <select id="newTaskCategory" required>
-                        <option value="Trabajo">Trabajo</option>
-                        <option value="Formación">Formación</option>
-                        <option value="Equipo">Equipo</option>
-                    </select>
-                    <select id="newTaskPriority" required>
-                        <option value="Alta">Alta</option>
-                        <option value="Media">Media</option>
-                        <option value="Baja">Baja</option>
-                    </select>
-                    <button type="submit">Añadir Tarea</button>
+                <form id="taskForm" class="flex flex-wrap gap-4 mb-8 items-end">
+                    <div class="flex-1 min-w-[200px]">
+                        <label for="newTaskTitle" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Título de la tarea</label>
+                        <input type="text" id="newTaskTitle" placeholder="Ej: Revisar documentación" required class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-slate-400">
+                    </div>
+                    <div class="w-full sm:w-auto min-w-[150px]">
+                        <label for="newTaskCategory" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Categoría</label>
+                        <select id="newTaskCategory" required class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer">
+                            <option value="Trabajo">Trabajo</option>
+                            <option value="Formación">Formación</option>
+                            <option value="Equipo">Equipo</option>
+                        </select>
+                    </div>
+                    <div class="w-full sm:w-auto min-w-[150px]">
+                        <label for="newTaskPriority" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Prioridad</label>
+                        <select id="newTaskPriority" required class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer">
+                            <option value="Alta">Alta</option>
+                            <option value="Media">Media</option>
+                            <option value="Baja">Baja</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-800">
+                        Añadir Tarea
+                    </button>
                 </form>
 
-                <ul class="task-list" id="taskList">
+                <ul class="space-y-3" id="taskList">
                     <!-- Las tareas se cargarán aquí dinámicamente -->
                 </ul>
             </section>
         </main>
 
-        <aside>
-            <h3>Filtros y Búsqueda</h3>
+        <aside class="w-full md:w-80 bg-slate-100 dark:bg-slate-800/50 p-6 md:m-8 md:ml-0 md:rounded-xl border-y md:border border-slate-200 dark:border-slate-700 flex flex-col gap-8 md:h-fit sticky top-8">
+            <div>
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    Filtros y Búsqueda
+                </h3>
 
-            <div class="filter-group">
-                <label for="searchInput">Buscar tarea:</label>
-                <input type="text" id="searchInput" placeholder="Escribe para buscar..." />
-            </div>
+                <div class="mb-6">
+                    <label for="searchInput" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Buscar tarea:</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" id="searchInput" placeholder="Escribe para buscar..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400" />
+                    </div>
+                </div>
 
-            <div class="filter-group">
-                <p>Categorías:</p>
-                <ul class="category-filters" id="categoryFilters">
-                    <li><button class="filter-btn active" data-category="Todas">Todas</button></li>
-                    <li><button class="filter-btn" data-category="Trabajo">Trabajo</button></li>
-                    <li><button class="filter-btn" data-category="Formación">Formación</button></li>
-                    <li><button class="filter-btn" data-category="Equipo">Equipo</button></li>
-                </ul>
+                <div>
+                    <p class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">Categorías:</p>
+                    <ul class="flex flex-col gap-2" id="categoryFilters">
+                        <li><button class="filter-btn active w-full text-left px-4 py-2 rounded-lg border border-transparent hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors ui-active:bg-blue-600 ui-active:text-white ui-active:hover:bg-blue-700 dark:ui-active:bg-blue-600 font-medium" data-category="Todas">Todas</button></li>
+                        <li><button class="filter-btn w-full text-left px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium text-slate-700 dark:text-slate-300" data-category="Trabajo">Trabajo</button></li>
+                        <li><button class="filter-btn w-full text-left px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium text-slate-700 dark:text-slate-300" data-category="Formación">Formación</button></li>
+                        <li><button class="filter-btn w-full text-left px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium text-slate-700 dark:text-slate-300" data-category="Equipo">Equipo</button></li>
+                    </ul>
+                </div>
             </div>
         </aside>
     </div>
