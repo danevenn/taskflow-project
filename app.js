@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('taskForm');
     const taskList = document.getElementById('taskList');
     const searchInput = document.getElementById('searchInput');
+    const clearAllBtn = document.getElementById('clearAllTasksBtn');
     const categoryFilters = document.querySelectorAll('.filter-btn');
     const statusFilters = document.querySelectorAll('.status-btn');
     const themeToggle = document.getElementById('themeToggle');
@@ -396,6 +397,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Iniciar con los filtros activos visualmente
     document.querySelector('.filter-btn[data-category="Todas"]').click();
     document.querySelector('.status-btn[data-status="Todos"]').click();
+
+    // 9. Borrar Todas las Tareas
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', () => {
+            if (tasks.length === 0) {
+                alert('No hay tareas para borrar.');
+                return;
+            }
+
+            if (confirm('¿Estás seguro de que quieres borrar TODAS las tareas? Esta acción no se puede deshacer.')) {
+                tasks = [];
+                saveTasks();
+                renderTasks();
+            }
+        });
+    }
 
     loadTasks();
 });
