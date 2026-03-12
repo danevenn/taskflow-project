@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('taskList');
     const searchInput = document.getElementById('searchInput');
     const categoryFilters = document.querySelectorAll('.filter-btn');
+    const statusFilters = document.querySelectorAll('.status-btn');
     const themeToggle = document.getElementById('themeToggle');
     const themeIconDark = document.getElementById('themeIconDark');
     const themeIconLight = document.getElementById('themeIconLight');
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let tasks = [];
     let currentFilter = 'Todas';
+    let currentStatusFilter = 'Todos';
 
     /**
      * Inicializa el modo de tema (claro/oscuro) según `localStorage`
@@ -203,7 +205,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const filteredTasks = tasks.filter(task => {
             const matchesCategory = currentFilter === 'Todas' || task.category === currentFilter;
             const matchesSearch = task.title.toLowerCase().includes(searchTerm);
-            return matchesCategory && matchesSearch;
+            
+            let matchesStatus = true;
+            if (currentStatusFilter === 'Pendientes') {
+                matchesStatus = !task.completed;
+            } else if (currentStatusFilter === 'Completadas') {
+                matchesStatus = !!task.completed;
+            }
+
+            return matchesCategory && matchesSearch && matchesStatus;
         });
 
         filteredTasks.sort((a, b) => {
@@ -366,8 +376,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Iniciar con el filtro "Todas" activo visualmente
-    document.querySelector('[data-category="Todas"]').click();
+    // 8. Filtro por Estado
+    statusFilters.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            statusFilters.forEach(b => {
+                b.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-600');
+                b.classList.add('border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
+            });
+
+            const targetBtn = e.target.closest('button');
+            targetBtn.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-600');
+            targetBtn.classList.remove('border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
+
+            currentStatusFilter = targetBtn.getAttribute('data-status');
+            renderTasks();
+        });
+    });
+
+    // Iniciar con los filtros activos visualmente
+    document.querySelector('.filter-btn[data-category="Todas"]').click();
+    document.querySelector('.status-btn[data-status="Todos"]').click();
 
     loadTasks();
 });
