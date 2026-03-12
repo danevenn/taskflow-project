@@ -80,6 +80,3 @@ Haz clic en el botón **Borrar todas las tareas** en la parte inferior de la bar
 
 ## Contribución
 Siéntete libre de abrir issues o enviar pull requests. Por favor, sigue el estilo de código existente y ejecuta `npm run lint` antes de realizar commits.
-
-## Licencia
-MIT © 2026 Danny
