@@ -1,7 +1,10 @@
 @import "tailwindcss";
-@config "./tailwind.config.js";
 
-/* Podemos definir el scale base y nuestras variables custom */
+@source "./index.html";
+@source "./app.js";
+
+@custom-variant dark (&:is(.dark *));
+
 @theme {
-  --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
