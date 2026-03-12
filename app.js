@@ -7,17 +7,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeIconDark = document.getElementById('themeIconDark');
     const themeIconLight = document.getElementById('themeIconLight');
 
+    /**
+     * Mapa de peso por prioridad: mayor valor = más importante.
+     * Se utiliza para ordenar las tareas mostradas.
+     */
+    const PRIORITY_ORDER = {
+        Alta: 3,
+        Media: 2,
+        Baja: 1
+    };
+
     let tasks = [];
     let currentFilter = 'Todas';
 
-    // 0. Lógica del Modo Oscuro
+    /**
+     * Inicializa el modo de tema (claro/oscuro) según `localStorage`
+     * y las preferencias del sistema, y sincroniza los iconos del botón.
+     */
     function initTheme() {
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const storedTheme = localStorage.getItem('theme');
+
+        const useDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
+
+        document.documentElement.classList.toggle('dark', useDark);
+        if (useDark) {
             themeIconLight.classList.remove('hidden');
+            themeIconDark.classList.add('hidden');
         } else {
-            document.documentElement.classList.remove('dark');
             themeIconDark.classList.remove('hidden');
+            themeIconLight.classList.add('hidden');
         }
     }
 
@@ -27,30 +46,60 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDark) {
             themeIconDark.classList.add('hidden');
             themeIconLight.classList.remove('hidden');
-            localStorage.theme = 'dark';
+            localStorage.setItem('theme', 'dark');
         } else {
             themeIconLight.classList.add('hidden');
             themeIconDark.classList.remove('hidden');
-            localStorage.theme = 'light';
+            localStorage.setItem('theme', 'light');
         }
     });
 
     initTheme();
 
-    // 1. Cargar tareas desde LocalStorage
+    /**
+     * Carga las tareas persistidas en `localStorage`.
+     * Si los datos están corruptos, limpia la clave y comienza con una lista vacía.
+     */
     function loadTasks() {
         const storedTasks = localStorage.getItem('tasks');
-        if (storedTasks) {
-            tasks = JSON.parse(storedTasks);
+        if (!storedTasks) {
             renderTasks();
+            return;
         }
+
+        try {
+            const parsed = JSON.parse(storedTasks);
+            if (Array.isArray(parsed)) {
+                tasks = parsed;
+            }
+        } catch (error) {
+            console.error('No se pudieron leer las tareas desde localStorage. Se reinicia el estado.', error);
+            localStorage.removeItem('tasks');
+            tasks = [];
+        }
+
+        renderTasks();
     }
 
-    // 2. Guardar tareas en LocalStorage
+    /**
+     * Guarda el estado actual de tareas en `localStorage`.
+     */
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
+    /**
+     * Crea el elemento de lista (tarjeta) para una tarea concreta.
+     *
+     * @param {Object} task - Tarea a representar.
+     * @param {string} task.id - Identificador único de la tarea.
+     * @param {string} task.title - Título descriptivo de la tarea.
+     * @param {string} task.category - Categoría asociada a la tarea.
+     * @param {string} task.priority - Prioridad de la tarea (Alta, Media, Baja).
+     * @param {number} [task.createdAt] - Marca de tiempo (ms) de creación.
+     * @param {boolean} [showDeleteBtn=true] - Indica si se debe mostrar el botón de borrado.
+     * @returns {HTMLLIElement} Elemento de lista listo para insertarse en el DOM.
+     */
     function createTaskElement(task, showDeleteBtn = true) {
         const li = document.createElement('li');
         li.className = 'flex flex-col sm:flex-row sm:items-center gap-4 bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 group';
@@ -59,24 +108,60 @@ document.addEventListener('DOMContentLoaded', () => {
         if (task.priority === 'Alta') badgeClass = 'bg-red-500 text-white';
         else if (task.priority === 'Media') badgeClass = 'bg-amber-500 text-white';
 
-        let deleteBtnHTML = showDeleteBtn ? `<button class="delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none ml-auto" data-id="${task.id}" aria-label="Eliminar Tarea">
-            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>` : '';
+        const mainContainer = document.createElement('div');
+        mainContainer.className = 'flex-1 min-w-0';
 
-        li.innerHTML = `
-            <div class="flex-1 min-w-0">
-                <span class="block truncate font-bold text-lg text-slate-800 dark:text-slate-100">${task.title}</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="px-2.5 py-1 text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md truncate">${task.category}</span>
-                <span class="px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap ${badgeClass}">${task.priority}</span>
-                ${deleteBtnHTML}
-            </div>
-        `;
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'block truncate font-bold text-lg text-slate-800 dark:text-slate-100';
+        titleSpan.textContent = task.title;
+        mainContainer.appendChild(titleSpan);
+
+        const metaContainer = document.createElement('div');
+        metaContainer.className = 'flex items-center gap-3';
+
+        const categorySpan = document.createElement('span');
+        categorySpan.className = 'px-2.5 py-1 text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md truncate';
+        categorySpan.textContent = task.category;
+        metaContainer.appendChild(categorySpan);
+
+        const prioritySpan = document.createElement('span');
+        prioritySpan.className = `px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap ${badgeClass}`;
+        prioritySpan.textContent = task.priority;
+        metaContainer.appendChild(prioritySpan);
+
+        if (showDeleteBtn) {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none ml-auto';
+            deleteBtn.setAttribute('data-id', task.id);
+            deleteBtn.setAttribute('aria-label', 'Eliminar Tarea');
+
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            icon.setAttribute('class', 'w-4 h-4 pointer-events-none');
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+            icon.setAttribute('viewBox', '0 0 24 24');
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            path.setAttribute('stroke-width', '2');
+            path.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+
+            icon.appendChild(path);
+            deleteBtn.appendChild(icon);
+            metaContainer.appendChild(deleteBtn);
+        }
+
+        li.appendChild(mainContainer);
+        li.appendChild(metaContainer);
+
         return li;
     }
 
-    // 3. Renderizar las tareas
+    /**
+     * Aplica filtros y ordenación actuales y renderiza la lista de tareas.
+     * También actualiza la sección de “Novedades”.
+     */
     function renderTasks() {
         taskList.innerHTML = '';
 
@@ -88,18 +173,30 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchesCategory && matchesSearch;
         });
 
-        const priorityMap = { 'Alta': 3, 'Media': 2, 'Baja': 1 };
-
-        filteredTasks.sort((a, b) => priorityMap[b.priority] - priorityMap[a.priority]);
-
-        filteredTasks.forEach(task => {
-            taskList.appendChild(createTaskElement(task, true));
+        filteredTasks.sort((a, b) => {
+            const priorityA = PRIORITY_ORDER[a.priority] || 0;
+            const priorityB = PRIORITY_ORDER[b.priority] || 0;
+            return priorityB - priorityA;
         });
+
+        if (filteredTasks.length === 0) {
+            const emptyState = document.createElement('li');
+            emptyState.className = 'text-sm text-slate-500 dark:text-slate-400 italic';
+            emptyState.textContent = 'No hay tareas que coincidan con los filtros actuales.';
+            taskList.appendChild(emptyState);
+        } else {
+            filteredTasks.forEach(task => {
+                taskList.appendChild(createTaskElement(task, true));
+            });
+        }
 
         updateNovedades();
     }
 
-    // Actualizar sección de Novedades (últimos 3 días)
+    /**
+     * Actualiza la sección de “Novedades”, mostrando las tareas creadas
+     * en los últimos 3 días, separando las 3 más recientes y el resto.
+     */
     function updateNovedades() {
         const recentTasksCountEl = document.getElementById('recentTasksCount');
         const recentTasksListEl = document.getElementById('recentTasksList');
@@ -110,11 +207,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
 
-        // Asumimos que task.id es el timestamp de creación
-        const recentTasks = tasks.filter(task => {
-            const taskTimestamp = parseInt(task.id);
-            return !isNaN(taskTimestamp) && taskTimestamp >= threeDaysAgo;
-        }).sort((a, b) => parseInt(b.id) - parseInt(a.id)); // Más recientes primero
+        const recentTasks = tasks
+            .filter(task => {
+                const timestamp = typeof task.createdAt === 'number'
+                    ? task.createdAt
+                    : parseInt(task.id, 10);
+                return !Number.isNaN(timestamp) && timestamp >= threeDaysAgo;
+            })
+            .sort((a, b) => {
+                const timeA = typeof a.createdAt === 'number' ? a.createdAt : parseInt(a.id, 10);
+                const timeB = typeof b.createdAt === 'number' ? b.createdAt : parseInt(b.id, 10);
+                return (timeB || 0) - (timeA || 0);
+            }); // Más recientes primero
 
         recentTasksCountEl.textContent = recentTasks.length;
 
@@ -130,13 +234,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Renderizar el resto si hay más de 3
         if (recentTasks.length > 3) {
-            moreRecentTasksContainerEl.style.display = 'block';
+            moreRecentTasksContainerEl.classList.remove('hidden');
             const restTasks = recentTasks.slice(3);
             restTasks.forEach(task => {
                 moreRecentTasksListEl.appendChild(createTaskElement(task, false));
             });
         } else {
-            if (moreRecentTasksContainerEl) moreRecentTasksContainerEl.style.display = 'none';
+            if (moreRecentTasksContainerEl) {
+                moreRecentTasksContainerEl.classList.add('hidden');
+            }
         }
     }
 
@@ -149,10 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const priorityInput = document.getElementById('newTaskPriority');
 
         const newTask = {
-            id: Date.now().toString(),
+            id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(),
             title: titleInput.value.trim(),
             category: categoryInput.value,
-            priority: priorityInput.value
+            priority: priorityInput.value,
+            createdAt: Date.now()
         };
 
         if (newTask.title !== '') {

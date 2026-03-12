@@ -16,6 +16,7 @@ Workflow de mejoras:
 - Inspección de código de negocio principal para smells, errores comunes y oportunidades de refactor.
 - Revisado de seguridad y secretos (env, logging, auth, dependencias).
 - Entrega de lista priorizada de mejoras + quick wins + recomendaciones a medio plazo.
+- Añadir comentarios JSDoc en funciones clave del proyecto para mejorar la auto-documentación y la comprensión del código.
 
 Detalle de mejoras aplicables al proyecto TASKFLOW-PROJECT:
 
@@ -24,6 +25,7 @@ Detalle de mejoras aplicables al proyecto TASKFLOW-PROJECT:
   - Dejar de versionar `node_modules` y regenerarlo siempre vía `npm install`.
   - Incorporar tooling básico de calidad: ESLint y/o Prettier con scripts `npm run lint` y `npm run format`.
   - Valorar la introducción de tests unitarios sencillos para la lógica de tareas (filtros, ordenación por prioridad, cálculo de “Novedades”).
+  - Incluir comentarios JSDoc en funciones como `initTheme`, `loadTasks`, `saveTasks`, `createTaskElement`, `renderTasks` y `updateNovedades` para describir claramente su propósito, parámetros y valores de retorno.
 
 - Seguridad y robustez
   - Reescribir `createTaskElement` para eliminar `innerHTML` con datos de usuario y construir los nodos con `createElement` y `textContent`.
