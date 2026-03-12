@@ -109,10 +109,22 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (task.priority === 'Media') badgeClass = 'bg-amber-500 text-white';
 
         const mainContainer = document.createElement('div');
-        mainContainer.className = 'flex-1 min-w-0';
+        mainContainer.className = 'flex-1 min-w-0 flex items-center gap-3';
+
+        const parseBool = (val) => val === true || val === 'true';
+        const isCompleted = parseBool(task.completed);
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer toggle-completed-btn';
+        checkbox.checked = isCompleted;
+        checkbox.setAttribute('data-id', task.id);
+        checkbox.setAttribute('aria-label', 'Marcar como completada');
+        
+        mainContainer.appendChild(checkbox);
 
         const titleSpan = document.createElement('span');
-        titleSpan.className = 'block truncate font-bold text-lg text-slate-800 dark:text-slate-100';
+        titleSpan.className = `block truncate font-bold text-lg text-slate-800 dark:text-slate-100 transition-all ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : ''}`;
         titleSpan.textContent = task.title;
         mainContainer.appendChild(titleSpan);
 
@@ -259,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title: titleInput.value.trim(),
             category: categoryInput.value,
             priority: priorityInput.value,
+            completed: false,
             createdAt: Date.now()
         };
 
@@ -274,13 +287,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 5. Eliminar Tarea
+    // 5. Interactuar con las Tareas (Eliminar / Completar)
     taskList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-            const taskId = e.target.getAttribute('data-id');
+        if (e.target.closest('.delete-btn')) {
+            const deleteBtn = e.target.closest('.delete-btn');
+            const taskId = deleteBtn.getAttribute('data-id');
             tasks = tasks.filter(task => task.id !== taskId);
             saveTasks();
             renderTasks();
+        } else if (e.target.classList.contains('toggle-completed-btn')) {
+            const taskId = e.target.getAttribute('data-id');
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+            if (taskIndex > -1) {
+                tasks[taskIndex].completed = e.target.checked;
+                saveTasks();
+                renderTasks();
+            }
         }
     });
 
