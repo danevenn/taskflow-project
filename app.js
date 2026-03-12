@@ -142,25 +142,46 @@ document.addEventListener('DOMContentLoaded', () => {
         metaContainer.appendChild(prioritySpan);
 
         if (showDeleteBtn) {
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none ml-auto sm:ml-4';
+            editBtn.setAttribute('data-id', task.id);
+            editBtn.setAttribute('aria-label', 'Editar Tarea');
+
+            const editIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            editIcon.setAttribute('class', 'w-4 h-4 pointer-events-none');
+            editIcon.setAttribute('fill', 'none');
+            editIcon.setAttribute('stroke', 'currentColor');
+            editIcon.setAttribute('viewBox', '0 0 24 24');
+
+            const editPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            editPath.setAttribute('stroke-linecap', 'round');
+            editPath.setAttribute('stroke-linejoin', 'round');
+            editPath.setAttribute('stroke-width', '2');
+            editPath.setAttribute('d', 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z');
+
+            editIcon.appendChild(editPath);
+            editBtn.appendChild(editIcon);
+            metaContainer.appendChild(editBtn);
+
             const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none ml-auto';
+            deleteBtn.className = 'delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none ml-2';
             deleteBtn.setAttribute('data-id', task.id);
             deleteBtn.setAttribute('aria-label', 'Eliminar Tarea');
 
-            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            icon.setAttribute('class', 'w-4 h-4 pointer-events-none');
-            icon.setAttribute('fill', 'none');
-            icon.setAttribute('stroke', 'currentColor');
-            icon.setAttribute('viewBox', '0 0 24 24');
+            const deleteIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            deleteIcon.setAttribute('class', 'w-4 h-4 pointer-events-none');
+            deleteIcon.setAttribute('fill', 'none');
+            deleteIcon.setAttribute('stroke', 'currentColor');
+            deleteIcon.setAttribute('viewBox', '0 0 24 24');
 
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('stroke-linejoin', 'round');
-            path.setAttribute('stroke-width', '2');
-            path.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+            const deletePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            deletePath.setAttribute('stroke-linecap', 'round');
+            deletePath.setAttribute('stroke-linejoin', 'round');
+            deletePath.setAttribute('stroke-width', '2');
+            deletePath.setAttribute('d', 'M6 18L18 6M6 6l12 12');
 
-            icon.appendChild(path);
-            deleteBtn.appendChild(icon);
+            deleteIcon.appendChild(deletePath);
+            deleteBtn.appendChild(deleteIcon);
             metaContainer.appendChild(deleteBtn);
         }
 
@@ -287,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 5. Interactuar con las Tareas (Eliminar / Completar)
+    // 5. Interactuar con las Tareas (Editar / Eliminar / Completar)
     taskList.addEventListener('click', (e) => {
         if (e.target.closest('.delete-btn')) {
             const deleteBtn = e.target.closest('.delete-btn');
@@ -295,6 +316,21 @@ document.addEventListener('DOMContentLoaded', () => {
             tasks = tasks.filter(task => task.id !== taskId);
             saveTasks();
             renderTasks();
+        } else if (e.target.closest('.edit-btn')) {
+            const editBtn = e.target.closest('.edit-btn');
+            const taskId = editBtn.getAttribute('data-id');
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+            
+            if (taskIndex > -1) {
+                const currentTitle = tasks[taskIndex].title;
+                const newTitle = prompt('Edita el título de la tarea:', currentTitle);
+                
+                if (newTitle !== null && newTitle.trim() !== '') {
+                    tasks[taskIndex].title = newTitle.trim();
+                    saveTasks();
+                    renderTasks();
+                }
+            }
         } else if (e.target.classList.contains('toggle-completed-btn')) {
             const taskId = e.target.getAttribute('data-id');
             const taskIndex = tasks.findIndex(task => task.id === taskId);
