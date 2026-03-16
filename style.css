@@ -7,6 +7,7 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-50: oklch(97.1% 0.013 17.38);
     --color-red-100: oklch(93.6% 0.032 17.717);
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
@@ -14,17 +15,20 @@
     --color-red-900: oklch(39.6% 0.141 25.723);
     --color-amber-500: oklch(76.9% 0.188 70.08);
     --color-green-500: oklch(72.3% 0.219 149.579);
+    --color-blue-100: oklch(93.2% 0.032 255.585);
     --color-blue-300: oklch(80.9% 0.105 251.813);
     --color-blue-400: oklch(70.7% 0.165 254.624);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-blue-700: oklch(48.8% 0.243 264.376);
     --color-blue-800: oklch(42.4% 0.199 265.638);
+    --color-blue-900: oklch(37.9% 0.146 265.522);
     --color-slate-50: oklch(98.4% 0.003 247.858);
     --color-slate-100: oklch(96.8% 0.007 247.896);
     --color-slate-200: oklch(92.9% 0.013 255.508);
     --color-slate-300: oklch(86.9% 0.022 252.894);
     --color-slate-400: oklch(70.4% 0.04 256.788);
+    --color-slate-500: oklch(55.4% 0.046 257.417);
     --color-slate-600: oklch(44.6% 0.043 257.281);
     --color-slate-700: oklch(37.2% 0.044 257.287);
     --color-slate-800: oklch(27.9% 0.041 260.031);
@@ -36,6 +40,8 @@
     --text-xs--line-height: calc(1 / 0.75);
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
+    --text-base: 1rem;
+    --text-base--line-height: calc(1.5 / 1);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
     --text-xl: 1.25rem;
@@ -218,6 +224,9 @@
   .inset-y-0 {
     inset-block: calc(var(--spacing) * 0);
   }
+  .start {
+    inset-inline-start: var(--spacing);
+  }
   .top-8 {
     top: calc(var(--spacing) * 8);
   }
@@ -250,6 +259,9 @@
   }
   .mb-8 {
     margin-bottom: calc(var(--spacing) * 8);
+  }
+  .ml-2 {
+    margin-left: calc(var(--spacing) * 2);
   }
   .ml-auto {
     margin-left: auto;
@@ -357,6 +369,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .rounded {
+    border-radius: 0.25rem;
+  }
   .rounded-full {
     border-radius: calc(infinity * 1px);
   }
@@ -377,8 +392,15 @@
     border-block-style: var(--tw-border-style);
     border-block-width: 1px;
   }
+  .border-t {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
+  }
   .border-blue-600 {
     border-color: var(--color-blue-600);
+  }
+  .border-red-500 {
+    border-color: var(--color-red-500);
   }
   .border-slate-200 {
     border-color: var(--color-slate-200);
@@ -391,6 +413,9 @@
   }
   .bg-amber-500 {
     background-color: var(--color-amber-500);
+  }
+  .bg-blue-100 {
+    background-color: var(--color-blue-100);
   }
   .bg-blue-600 {
     background-color: var(--color-blue-600);
@@ -412,6 +437,9 @@
   }
   .bg-slate-100 {
     background-color: var(--color-slate-100);
+  }
+  .bg-slate-200 {
+    background-color: var(--color-slate-200);
   }
   .bg-white {
     background-color: var(--color-white);
@@ -443,8 +471,14 @@
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
   }
+  .pt-6 {
+    padding-top: calc(var(--spacing) * 6);
+  }
   .pr-4 {
     padding-right: calc(var(--spacing) * 4);
+  }
+  .pr-12 {
+    padding-right: calc(var(--spacing) * 12);
   }
   .pl-3 {
     padding-left: calc(var(--spacing) * 3);
@@ -461,6 +495,10 @@
   .text-2xl {
     font-size: var(--text-2xl);
     line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-base {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
   }
   .text-lg {
     font-size: var(--text-lg);
@@ -502,6 +540,9 @@
   .text-slate-400 {
     color: var(--color-slate-400);
   }
+  .text-slate-500 {
+    color: var(--color-slate-500);
+  }
   .text-slate-600 {
     color: var(--color-slate-600);
   }
@@ -516,6 +557,12 @@
   }
   .text-white {
     color: var(--color-white);
+  }
+  .italic {
+    font-style: italic;
+  }
+  .line-through {
+    text-decoration-line: line-through;
   }
   .placeholder-slate-400 {
     &::placeholder {
@@ -566,6 +613,13 @@
       }
     }
   }
+  .hover\:bg-blue-500 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-blue-500);
+      }
+    }
+  }
   .hover\:bg-blue-700 {
     &:hover {
       @media (hover: hover) {
@@ -580,6 +634,13 @@
       }
     }
   }
+  .hover\:bg-red-50 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-50);
+      }
+    }
+  }
   .hover\:bg-red-500 {
     &:hover {
       @media (hover: hover) {
@@ -587,10 +648,24 @@
       }
     }
   }
+  .hover\:bg-slate-50 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-slate-50);
+      }
+    }
+  }
   .hover\:bg-slate-200 {
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-slate-200);
+      }
+    }
+  }
+  .hover\:bg-slate-300 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-slate-300);
       }
     }
   }
@@ -652,6 +727,11 @@
     &:focus {
       --tw-outline-style: none;
       outline-style: none;
+    }
+  }
+  .sm\:ml-4 {
+    @media (width >= 40rem) {
+      margin-left: calc(var(--spacing) * 4);
     }
   }
   .sm\:w-auto {
@@ -725,6 +805,14 @@
       background-color: var(--color-blue-800);
     }
   }
+  .dark\:bg-blue-900\/30 {
+    &:is(.dark *) {
+      background-color: color-mix(in srgb, oklch(37.9% 0.146 265.522) 30%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-blue-900) 30%, transparent);
+      }
+    }
+  }
   .dark\:bg-red-900\/30 {
     &:is(.dark *) {
       background-color: color-mix(in srgb, oklch(39.6% 0.141 25.723) 30%, transparent);
@@ -771,6 +859,11 @@
       color: var(--color-slate-100);
     }
   }
+  .dark\:text-slate-200 {
+    &:is(.dark *) {
+      color: var(--color-slate-200);
+    }
+  }
   .dark\:text-slate-300 {
     &:is(.dark *) {
       color: var(--color-slate-300);
@@ -781,11 +874,37 @@
       color: var(--color-slate-400);
     }
   }
+  .dark\:text-slate-500 {
+    &:is(.dark *) {
+      color: var(--color-slate-500);
+    }
+  }
+  .dark\:hover\:bg-blue-500 {
+    &:is(.dark *) {
+      &:hover {
+        @media (hover: hover) {
+          background-color: var(--color-blue-500);
+        }
+      }
+    }
+  }
   .dark\:hover\:bg-red-500 {
     &:is(.dark *) {
       &:hover {
         @media (hover: hover) {
           background-color: var(--color-red-500);
+        }
+      }
+    }
+  }
+  .dark\:hover\:bg-red-900\/20 {
+    &:is(.dark *) {
+      &:hover {
+        @media (hover: hover) {
+          background-color: color-mix(in srgb, oklch(39.6% 0.141 25.723) 20%, transparent);
+          @supports (color: color-mix(in lab, red, red)) {
+            background-color: color-mix(in oklab, var(--color-red-900) 20%, transparent);
+          }
         }
       }
     }
@@ -804,6 +923,18 @@
       &:hover {
         @media (hover: hover) {
           background-color: var(--color-slate-700);
+        }
+      }
+    }
+  }
+  .dark\:hover\:bg-slate-700\/50 {
+    &:is(.dark *) {
+      &:hover {
+        @media (hover: hover) {
+          background-color: color-mix(in srgb, oklch(37.2% 0.044 257.287) 50%, transparent);
+          @supports (color: color-mix(in lab, red, red)) {
+            background-color: color-mix(in oklab, var(--color-slate-700) 50%, transparent);
+          }
         }
       }
     }
@@ -832,6 +963,23 @@
         --tw-ring-offset-color: var(--color-slate-800);
       }
     }
+  }
+}
+@layer base {
+  input, select, textarea, button {
+    font-size: 16px !important;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: 2px;
+  }
+  .dark :focus-visible {
+    outline-color: var(--color-blue-400);
+  }
+}
+@layer utilities {
+  .btn-hover:hover {
+    filter: brightness(0.9);
   }
 }
 @property --tw-space-y-reverse {
