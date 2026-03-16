@@ -50,11 +50,11 @@
                 <form id="taskForm" class="flex flex-wrap gap-4 mb-8 items-end">
                     <div class="flex-1 min-w-[200px]">
                         <label for="newTaskTitle" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Título de la tarea</label>
-                        <input type="text" id="newTaskTitle" placeholder="Ej: Revisar documentación" required class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-slate-400">
+                        <input type="text" id="newTaskTitle" placeholder="Ej: Revisar documentación" required class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-slate-400 text-base">
                     </div>
                     <div class="w-full sm:w-auto min-w-[150px]">
                         <label for="newTaskCategory" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Categoría</label>
-                        <select id="newTaskCategory" required class="w-full px-4 py-2 pr-12 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer">
+                        <select id="newTaskCategory" required class="w-full px-4 py-2 pr-12 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer text-base">
                             <option value="Trabajo">Trabajo</option>
                             <option value="Formación">Formación</option>
                             <option value="Equipo">Equipo</option>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="w-full sm:w-auto min-w-[150px]">
                         <label for="newTaskPriority" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Prioridad</label>
-                        <select id="newTaskPriority" required class="w-full px-4 py-2 pr-12 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer">
+                        <select id="newTaskPriority" required class="w-full px-4 py-2 pr-12 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer text-base">
                             <option value="Alta">Alta</option>
                             <option value="Media">Media</option>
                             <option value="Baja">Baja</option>
@@ -92,7 +92,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" id="searchInput" placeholder="Escribe para buscar..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400" />
+                        <input type="text" id="searchInput" placeholder="Escribe para buscar..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400 text-base" />
                     </div>
                 </div>
 
@@ -114,7 +114,15 @@
                     </ul>
                 </div>
                 
-                <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-700">
+                <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                    <button id="completeAllTasksBtn" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors font-medium focus:ring-2 focus:ring-blue-500 outline-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Marcar todas como completadas
+                    </button>
+                    <button id="clearCompletedBtn" class="w-full flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition-colors font-medium focus:ring-2 focus:ring-blue-500 outline-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Borrar completadas
+                    </button>
                     <button id="clearAllTasksBtn" class="w-full flex items-center justify-center gap-2 px-4 py-2 border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors font-medium focus:ring-2 focus:ring-red-500 outline-none">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         Borrar todas las tareas

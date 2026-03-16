@@ -8,3 +8,26 @@
 @theme {
     --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
+@layer base {
+    input, select, textarea, button {
+        font-size: 16px !important;
+    }
+
+    /* Mejora de accesibilidad para estados focus */
+    :focus-visible {
+        outline: 2px solid var(--color-blue-500);
+        outline-offset: 2px;
+    }
+
+    .dark :focus-visible {
+        outline-color: var(--color-blue-400);
+    }
+}
+
+@layer utilities {
+    /* Estados hover para botones que no los tengan específicos */
+    .btn-hover:hover {
+        filter: brightness(0.9);
+    }
+}

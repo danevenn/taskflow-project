@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('themeToggle');
     const themeIconDark = document.getElementById('themeIconDark');
     const themeIconLight = document.getElementById('themeIconLight');
+    const completeAllBtn = document.getElementById('completeAllTasksBtn');
+    const clearCompletedBtn = document.getElementById('clearCompletedBtn');
 
     /**
      * Mapa de peso por prioridad: mayor valor = más importante.
@@ -411,6 +413,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveTasks();
                 renderTasks();
             }
+        });
+    }
+
+    // 10. Marcar todas como completadas
+    if (completeAllBtn) {
+        completeAllBtn.addEventListener('click', () => {
+            if (tasks.length === 0) return;
+            tasks.forEach(task => task.completed = true);
+            saveTasks();
+            renderTasks();
+        });
+    }
+
+    // 11. Borrar tareas completadas
+    if (clearCompletedBtn) {
+        clearCompletedBtn.addEventListener('click', () => {
+            const initialCount = tasks.length;
+            tasks = tasks.filter(task => !task.completed);
+            
+            if (tasks.length === initialCount) {
+                alert('No hay tareas completadas para borrar.');
+                return;
+            }
+
+            saveTasks();
+            renderTasks();
         });
     }
 
