@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeIconLight = document.getElementById('themeIconLight');
     const completeAllBtn = document.getElementById('completeAllTasksBtn');
     const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+    const recentTasksList = document.getElementById('recentTasksList');
+    const moreRecentTasksList = document.getElementById('moreRecentTasksList');
 
     /**
      * Mapa de peso por prioridad: mayor valor = más importante.
@@ -322,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 5. Interactuar con las Tareas (Editar / Eliminar / Completar)
-    taskList.addEventListener('click', (e) => {
+    function handleTaskInteraction(e) {
         if (e.target.closest('.delete-btn')) {
             const deleteBtn = e.target.closest('.delete-btn');
             const taskId = deleteBtn.getAttribute('data-id');
@@ -353,7 +355,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderTasks();
             }
         }
-    });
+    }
+
+    taskList.addEventListener('click', handleTaskInteraction);
+    if (recentTasksList) recentTasksList.addEventListener('click', handleTaskInteraction);
+    if (moreRecentTasksList) moreRecentTasksList.addEventListener('click', handleTaskInteraction);
 
     // 6. Búsqueda por texto (Tiempo real)
     searchInput.addEventListener('input', () => {
