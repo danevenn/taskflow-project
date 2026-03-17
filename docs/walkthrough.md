@@ -33,6 +33,16 @@ This document tracks the evolution and improvements made to the Taskflow Project
     - **500 Internal Error**: Los fallos no controlados se registran en la consola del servidor pero se devuelven al cliente como un error 500 genérico para evitar fugas de información técnica.
 - **Validación en Controladores**: Los controladores ahora utilizan `next(error)` para propagar fallos al middleware global de forma limpia.
 
+### 6. Frontend Network Layer & State Management
+- **API Client**: Creado `client/src/api/client.js` encapsulando peticiones `fetch` asíncronas para desacoplar la red de la UI.
+- **Adiós LocalStorage**: Se ha eliminado la persistencia local de tareas en favor del servidor Node.js.
+- **Estados de UI**: La interfaz ahora gestiona visualmente estados de **Carga** (spinner animado), **Éxito** (mensajes temporales) y **Error** (feedback visual ante fallos de red o validación).
+- **Módulos ES**: Refactorizado `app.js` para usar `import/export`, mejorando la organización del código.
+
+### 7. Documentación Arquitectónica
+- **README Exhaustivo**: Creado un `README.md` en la raíz con la estructura del proyecto, stack tecnológico y manual de uso de la API.
+- **Research Técnico**: Nuevo documento `docs/backend-api.md` detallando el propósito de herramientas como Axios, Postman, Sentry y Swagger.
+
 ## Verification Results
 
 - [x] Bidirectional synchronization between lists verified.
