@@ -42,6 +42,7 @@ This document tracks the evolution and improvements made to the Taskflow Project
 ### 7. Documentación Arquitectónica
 - **README Exhaustivo**: Creado un `README.md` en la raíz con la estructura del proyecto, stack tecnológico y manual de uso de la API.
 - **Research Técnico**: Nuevo documento `docs/backend-api.md` detallando el propósito de herramientas como Axios, Postman, Sentry y Swagger.
+- **Audit de Integridad**: Tras un problema de colisión de nombres (Mayúsculas/Minúsculas) con el `README.md`, se ha realizado una auditoría completa del historial de Git. Se confirma que no se han perdido más archivos y que todas las eliminaciones previas fueron intencionadas (refactorización de Tailwind y unificación de dependencias).
 
 ## Verification Results
 
