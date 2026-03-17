@@ -4,8 +4,8 @@
   "description": "Esta página web es un ejemplo de una página web con un listado de tareas.",
   "main": "app.js",
   "scripts": {
-    "build:css": "npx @tailwindcss/cli -i ./input.css -o ./style.css",
-    "watch:css": "npx @tailwindcss/cli -i ./input.css -o ./style.css --watch"
+    "build:css": "npx @tailwindcss/cli -i ./client/input.css -o ./client/style.css",
+    "watch:css": "npx @tailwindcss/cli -i ./client/input.css -o ./client/style.css --watch"
   },
   "keywords": [],
   "author": "",

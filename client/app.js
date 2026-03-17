@@ -108,92 +108,50 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {HTMLLIElement} Elemento de lista listo para insertarse en el DOM.
      */
     function createTaskElement(task, showDeleteBtn = true) {
+        const isCompleted = task.completed === true || task.completed === 'true';
+        const badgeClass = task.priority === 'Alta' ? 'bg-red-500 text-white' : 
+                          task.priority === 'Media' ? 'bg-amber-500 text-white' : 
+                          'bg-green-500 text-white';
+
         const li = document.createElement('li');
         li.className = 'flex flex-col sm:flex-row sm:items-center gap-4 bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 group';
-
-        let badgeClass = 'bg-green-500 text-white'; // Baja
-        if (task.priority === 'Alta') badgeClass = 'bg-red-500 text-white';
-        else if (task.priority === 'Media') badgeClass = 'bg-amber-500 text-white';
-
-        const mainContainer = document.createElement('div');
-        mainContainer.className = 'flex-1 min-w-0 flex items-center gap-3';
-
-        const parseBool = (val) => val === true || val === 'true';
-        const isCompleted = parseBool(task.completed);
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer toggle-completed-btn';
-        checkbox.checked = isCompleted;
-        checkbox.setAttribute('data-id', task.id);
-        checkbox.setAttribute('aria-label', 'Marcar como completada');
         
-        mainContainer.appendChild(checkbox);
-
-        const titleSpan = document.createElement('span');
-        titleSpan.className = `block truncate font-bold text-lg text-slate-800 dark:text-slate-100 transition-all ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : ''}`;
-        titleSpan.textContent = task.title;
-        mainContainer.appendChild(titleSpan);
-
-        const metaContainer = document.createElement('div');
-        metaContainer.className = 'flex items-center gap-3';
-
-        const categorySpan = document.createElement('span');
-        categorySpan.className = 'px-2.5 py-1 text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md truncate';
-        categorySpan.textContent = task.category;
-        metaContainer.appendChild(categorySpan);
-
-        const prioritySpan = document.createElement('span');
-        prioritySpan.className = `px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap ${badgeClass}`;
-        prioritySpan.textContent = task.priority;
-        metaContainer.appendChild(prioritySpan);
-
-        if (showDeleteBtn) {
-            const editBtn = document.createElement('button');
-            editBtn.className = 'edit-btn w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none ml-auto sm:ml-4';
-            editBtn.setAttribute('data-id', task.id);
-            editBtn.setAttribute('aria-label', 'Editar Tarea');
-
-            const editIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            editIcon.setAttribute('class', 'w-4 h-4 pointer-events-none');
-            editIcon.setAttribute('fill', 'none');
-            editIcon.setAttribute('stroke', 'currentColor');
-            editIcon.setAttribute('viewBox', '0 0 24 24');
-
-            const editPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            editPath.setAttribute('stroke-linecap', 'round');
-            editPath.setAttribute('stroke-linejoin', 'round');
-            editPath.setAttribute('stroke-width', '2');
-            editPath.setAttribute('d', 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z');
-
-            editIcon.appendChild(editPath);
-            editBtn.appendChild(editIcon);
-            metaContainer.appendChild(editBtn);
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none ml-2';
-            deleteBtn.setAttribute('data-id', task.id);
-            deleteBtn.setAttribute('aria-label', 'Eliminar Tarea');
-
-            const deleteIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            deleteIcon.setAttribute('class', 'w-4 h-4 pointer-events-none');
-            deleteIcon.setAttribute('fill', 'none');
-            deleteIcon.setAttribute('stroke', 'currentColor');
-            deleteIcon.setAttribute('viewBox', '0 0 24 24');
-
-            const deletePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            deletePath.setAttribute('stroke-linecap', 'round');
-            deletePath.setAttribute('stroke-linejoin', 'round');
-            deletePath.setAttribute('stroke-width', '2');
-            deletePath.setAttribute('d', 'M6 18L18 6M6 6l12 12');
-
-            deleteIcon.appendChild(deletePath);
-            deleteBtn.appendChild(deleteIcon);
-            metaContainer.appendChild(deleteBtn);
-        }
-
-        li.appendChild(mainContainer);
-        li.appendChild(metaContainer);
+        li.innerHTML = `
+            <div class="flex-1 min-w-0 flex items-center gap-3">
+                <input type="checkbox" 
+                       class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer toggle-completed-btn" 
+                       data-id="${task.id}" 
+                       ${isCompleted ? 'checked' : ''} 
+                       aria-label="Marcar como completada">
+                <span class="block truncate font-bold text-lg text-slate-800 dark:text-slate-100 transition-all ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : ''}">
+                    ${task.title}
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md truncate">
+                    ${task.category}
+                </span>
+                <span class="px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap ${badgeClass}">
+                    ${task.priority}
+                </span>
+                ${showDeleteBtn ? `
+                    <button class="edit-btn w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none ml-auto sm:ml-4" 
+                            data-id="${task.id}" 
+                            aria-label="Editar Tarea">
+                        <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                    </button>
+                    <button class="delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none ml-2" 
+                            data-id="${task.id}" 
+                            aria-label="Eliminar Tarea">
+                        <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                ` : ''}
+            </div>
+        `;
 
         return li;
     }
