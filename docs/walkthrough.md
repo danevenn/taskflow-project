@@ -44,6 +44,11 @@ This document tracks the evolution and improvements made to the Taskflow Project
 - **Research Técnico**: Nuevo documento `docs/backend-api.md` detallando el propósito de herramientas como Axios, Postman, Sentry y Swagger.
 - **Audit de Integridad**: Tras un problema de colisión de nombres (Mayúsculas/Minúsculas) con el `README.md`, se ha realizado una auditoría completa del historial de Git. Se confirma que no se han perdido más archivos y que todas las eliminaciones previas fueron intencionadas (refactorización de Tailwind y unificación de dependencias).
 
+### 8. Documentación Swagger & Pruebas de API
+- **Swagger UI**: Implementada documentación interactiva en `/api-docs` usando `swagger-jsdoc`. Permite probar los endpoints directamente desde el navegador.
+- **Colección de Pruebas**: Creada una colección JSON en `docs/api-tests/` compatible con Postman y Thunder Client. Incluye pruebas específicas para forzar errores **400 (Bad Request)**, **404 (Not Found)** y verificar la estructura de respuesta.
+- **README Enriquecido**: El `README.md` raíz ahora contiene una sección detallada con ejemplos reales de JSON para cada petición y respuesta, incluyendo los esquemas de error.
+
 ## Verification Results
 
 - [x] Bidirectional synchronization between lists verified.

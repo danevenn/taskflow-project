@@ -51,20 +51,84 @@ taskflow-project/
     npm run build:css
     ```
 
-## 📡 API REST - Ejemplos de Interacción
+## 📡 API REST - Documentación Interactiva
 
-### Obtener Tareas
-`GET /api/v1/tasks` -> Devuelve un array de objetos de tarea.
+Si el servidor está corriendo, puedes acceder a la documentación interactiva (Swagger) en:
+`http://localhost:3000/api-docs`
 
-### Crear Tarea
-`POST /api/v1/tasks`
+---
+
+## 🛠️ Ejemplos de Interacción (Request/Response)
+
+### 1. Obtener todas las tareas
+**Endpoint:** `GET /api/v1/tasks`
+
+**Respuesta Exitosa (200 OK):**
+```json
+[
+  {
+    "id": "1710682800000",
+    "title": "Configurar Swagger",
+    "category": "Trabajo",
+    "priority": "Alta",
+    "completed": false,
+    "createdAt": 1710682800000
+  }
+]
+```
+
+### 2. Crear una nueva tarea
+**Endpoint:** `POST /api/v1/tasks`
+
+**Cuerpo (Request):**
 ```json
 {
-  "title": "Aprender Express",
+  "title": "Nueva Tarea Profesional",
   "category": "Formación",
-  "priority": "Alta"
+  "priority": "Media"
 }
 ```
 
-### Eliminar Tarea
-`DELETE /api/v1/tasks/:id` -> Devuelve un 204 si la eliminación es exitosa o 404 si el ID no existe.
+**Respuesta Exitosa (201 Created):**
+```json
+{
+  "id": "abc-123-uuid",
+  "title": "Nueva Tarea Profesional",
+  "category": "Formación",
+  "priority": "Media",
+  "completed": false,
+  "createdAt": 1710682950000
+}
+```
+
+**Error de Validación (400 Bad Request):**
+*Si falta el campo `title`*
+```json
+{
+  "error": "El título es obligatorio"
+}
+```
+
+### 3. Eliminar una tarea
+**Endpoint:** `DELETE /api/v1/tasks/:id`
+
+**Respuesta Exitosa (24 No Content):**
+*(Sin cuerpo)*
+
+**Error No Encontrado (404 Not Found):**
+*Si el ID no existe en el sistema*
+```json
+{
+  "error": "Tarea no encontrada",
+  "message": "La tarea con el ID proporcionado no existe en nuestro registro."
+}
+```
+
+### 4. Error Generico (500 Internal Server Error)
+En caso de fallo crítico inesperado en el servidor:
+```json
+{
+  "error": "Error interno del servidor",
+  "message": "Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo más tarde."
+}
+```

@@ -8,6 +8,30 @@ app.use(cors());
 app.use(express.json());
 
 const taskRoutes = require('./routes/task.routes');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Taskflow API',
+            version: '1.0.0',
+            description: 'API profesional para la gestión de tareas con persistencia en memoria y manejo global de errores.',
+        },
+        servers: [
+            {
+                url: `http://localhost:${PORT}`,
+                description: 'Servidor Local',
+            },
+        ],
+    },
+    apis: ['./server/src/routes/*.js'], // Ruta a las anotaciones JSDoc
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use('/api/v1/tasks', taskRoutes);
 
 app.get('/', (req, res) => {

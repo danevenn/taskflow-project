@@ -1,0 +1,69 @@
+{
+	"info": {
+		"name": "Taskflow API - Error Tests",
+		"description": "Colección para probar casos de éxito y errores semánticos (400, 404, 500) en el Taskflow Project.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Success Scenarios",
+			"item": [
+				{
+					"name": "GET All Tasks",
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:3000/api/v1/tasks"
+					}
+				},
+				{
+					"name": "CREATE Valid Task",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Tarea Postman\",\n  \"category\": \"Trabajo\",\n  \"priority\": \"Media\"\n}"
+						},
+						"url": "http://localhost:3000/api/v1/tasks"
+					}
+				}
+			]
+		},
+		{
+			"name": "Error Scenarios",
+			"item": [
+				{
+					"name": "ERROR 400 - Create without Title",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"category\": \"Formación\"\n}"
+						},
+						"url": "http://localhost:3000/api/v1/tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "ERROR 404 - Delete Inexistent ID",
+					"request": {
+						"method": "DELETE",
+						"url": "http://localhost:3000/api/v1/tasks/non-existent-12345"
+					}
+				},
+				{
+					"name": "TEST 404 Global Route",
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:3000/api/v1/invalid-route"
+					}
+				}
+			]
+		}
+	]
+}
