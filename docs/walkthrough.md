@@ -26,6 +26,13 @@ This document tracks the evolution and improvements made to the Taskflow Project
 - **Task Routes**: Defined API endpoints in `server/src/routes/task.routes.js` using Express Router.
 - **API Mounting**: The router is now mounted in `server/src/index.js` under the professional prefix `/api/v1/tasks`.
 
+### 5. Global Exception Handling
+- **Middleware Centralizado**: Implementado un manejador de errores de 4 parámetros en `server/src/index.js`.
+- **Mapeo Semántico**:
+    - **404 Not Found**: Los errores con mensaje `'NOT_FOUND'` se transforman automáticamente en respuestas 404.
+    - **500 Internal Error**: Los fallos no controlados se registran en la consola del servidor pero se devuelven al cliente como un error 500 genérico para evitar fugas de información técnica.
+- **Validación en Controladores**: Los controladores ahora utilizan `next(error)` para propagar fallos al middleware global de forma limpia.
+
 ## Verification Results
 
 - [x] Bidirectional synchronization between lists verified.

@@ -1,3 +1,5 @@
+import * as api from './src/api/client.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('taskForm');
     const taskList = document.getElementById('taskList');
@@ -12,11 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearCompletedBtn = document.getElementById('clearCompletedBtn');
     const recentTasksList = document.getElementById('recentTasksList');
     const moreRecentTasksList = document.getElementById('moreRecentTasksList');
+    const loadingState = document.getElementById('loadingState');
+    const statusMessage = document.getElementById('statusMessage');
 
-    /**
-     * Mapa de peso por prioridad: mayor valor = más importante.
-     * Se utiliza para ordenar las tareas mostradas.
-     */
     const PRIORITY_ORDER = {
         Alta: 3,
         Media: 2,
@@ -27,14 +27,35 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilter = 'Todas';
     let currentStatusFilter = 'Todos';
 
-    /**
-     * Inicializa el modo de tema (claro/oscuro) según `localStorage`
-     * y las preferencias del sistema, y sincroniza los iconos del botón.
-     */
+    // UI State Helpers
+    function showLoading(show) {
+        if (show) {
+            loadingState.classList.remove('hidden');
+            taskList.classList.add('hidden');
+        } else {
+            loadingState.classList.add('hidden');
+            taskList.classList.remove('hidden');
+        }
+    }
+
+    function showStatus(message, type = 'success') {
+        statusMessage.textContent = message;
+        statusMessage.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+        
+        if (type === 'success') {
+            statusMessage.classList.add('bg-green-100', 'text-green-800');
+        } else {
+            statusMessage.classList.add('bg-red-100', 'text-red-800');
+        }
+
+        setTimeout(() => {
+            statusMessage.classList.add('hidden');
+        }, 5000);
+    }
+
     function initTheme() {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const storedTheme = localStorage.getItem('theme');
-
         const useDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
 
         document.documentElement.classList.toggle('dark', useDark);
@@ -49,66 +70,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     themeToggle.addEventListener('click', () => {
         const isDark = document.documentElement.classList.toggle('dark');
-
-        if (isDark) {
-            themeIconDark.classList.add('hidden');
-            themeIconLight.classList.remove('hidden');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            themeIconLight.classList.add('hidden');
-            themeIconDark.classList.remove('hidden');
-            localStorage.setItem('theme', 'light');
-        }
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        themeIconDark.classList.toggle('hidden');
+        themeIconLight.classList.toggle('hidden');
     });
 
     initTheme();
 
-    /**
-     * Carga las tareas persistidas en `localStorage`.
-     * Si los datos están corruptos, limpia la clave y comienza con una lista vacía.
-     */
-    function loadTasks() {
-        const storedTasks = localStorage.getItem('tasks');
-        if (!storedTasks) {
-            renderTasks();
-            return;
-        }
-
+    async function loadTasks() {
+        showLoading(true);
         try {
-            const parsed = JSON.parse(storedTasks);
-            if (Array.isArray(parsed)) {
-                tasks = parsed;
-            }
+            tasks = await api.getTasks();
+            renderTasks();
         } catch (error) {
-            console.error('No se pudieron leer las tareas desde localStorage. Se reinicia el estado.', error);
-            localStorage.removeItem('tasks');
-            tasks = [];
+            console.error(error);
+            showStatus('Fallo al cargar las tareas del servidor.', 'error');
+        } finally {
+            showLoading(false);
         }
-
-        renderTasks();
     }
 
-    /**
-     * Guarda el estado actual de tareas en `localStorage`.
-     */
-    function saveTasks() {
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-    /**
-     * Crea el elemento de lista (tarjeta) para una tarea concreta.
-     *
-     * @param {Object} task - Tarea a representar.
-     * @param {string} task.id - Identificador único de la tarea.
-     * @param {string} task.title - Título descriptivo de la tarea.
-     * @param {string} task.category - Categoría asociada a la tarea.
-     * @param {string} task.priority - Prioridad de la tarea (Alta, Media, Baja).
-     * @param {number} [task.createdAt] - Marca de tiempo (ms) de creación.
-     * @param {boolean} [showDeleteBtn=true] - Indica si se debe mostrar el botón de borrado.
-     * @returns {HTMLLIElement} Elemento de lista listo para insertarse en el DOM.
-     */
     function createTaskElement(task, showDeleteBtn = true) {
-        const isCompleted = task.completed === true || task.completed === 'true';
+        const isCompleted = task.completed === true;
         const badgeClass = task.priority === 'Alta' ? 'bg-red-500 text-white' : 
                           task.priority === 'Media' ? 'bg-amber-500 text-white' : 
                           'bg-green-500 text-white';
@@ -135,14 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${task.priority}
                 </span>
                 ${showDeleteBtn ? `
-                    <button class="edit-btn w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none ml-auto sm:ml-4" 
-                            data-id="${task.id}" 
-                            aria-label="Editar Tarea">
-                        <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                        </svg>
-                    </button>
-                    <button class="delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none ml-2" 
+                    <button class="delete-btn w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors ml-2" 
                             data-id="${task.id}" 
                             aria-label="Eliminar Tarea">
                         <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,259 +128,140 @@ document.addEventListener('DOMContentLoaded', () => {
                 ` : ''}
             </div>
         `;
-
         return li;
     }
 
-    /**
-     * Aplica filtros y ordenación actuales y renderiza la lista de tareas.
-     * También actualiza la sección de “Novedades”.
-     */
     function renderTasks() {
         taskList.innerHTML = '';
-
         const searchTerm = searchInput.value.toLowerCase();
 
         const filteredTasks = tasks.filter(task => {
             const matchesCategory = currentFilter === 'Todas' || task.category === currentFilter;
             const matchesSearch = task.title.toLowerCase().includes(searchTerm);
-            
             let matchesStatus = true;
-            if (currentStatusFilter === 'Pendientes') {
-                matchesStatus = !task.completed;
-            } else if (currentStatusFilter === 'Completadas') {
-                matchesStatus = !!task.completed;
-            }
-
+            if (currentStatusFilter === 'Pendientes') matchesStatus = !task.completed;
+            else if (currentStatusFilter === 'Completadas') matchesStatus = !!task.completed;
             return matchesCategory && matchesSearch && matchesStatus;
         });
 
-        filteredTasks.sort((a, b) => {
-            const priorityA = PRIORITY_ORDER[a.priority] || 0;
-            const priorityB = PRIORITY_ORDER[b.priority] || 0;
-            return priorityB - priorityA;
-        });
+        filteredTasks.sort((a, b) => (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0));
 
         if (filteredTasks.length === 0) {
-            const emptyState = document.createElement('li');
-            emptyState.className = 'text-sm text-slate-500 dark:text-slate-400 italic';
-            emptyState.textContent = 'No hay tareas que coincidan con los filtros actuales.';
-            taskList.appendChild(emptyState);
+            taskList.innerHTML = '<li class="text-sm text-slate-500 dark:text-slate-400 italic">No hay tareas.</li>';
         } else {
-            filteredTasks.forEach(task => {
-                taskList.appendChild(createTaskElement(task, true));
-            });
+            filteredTasks.forEach(task => taskList.appendChild(createTaskElement(task, true)));
         }
 
         updateNovedades();
     }
 
-    /**
-     * Actualiza la sección de “Novedades”, mostrando las tareas creadas
-     * en los últimos 3 días, separando las 3 más recientes y el resto.
-     */
     function updateNovedades() {
-        const recentTasksCountEl = document.getElementById('recentTasksCount');
-        const recentTasksListEl = document.getElementById('recentTasksList');
-        const moreRecentTasksContainerEl = document.getElementById('moreRecentTasksContainer');
-        const moreRecentTasksListEl = document.getElementById('moreRecentTasksList');
+        const countEl = document.getElementById('recentTasksCount');
+        const listEl = document.getElementById('recentTasksList');
+        const containerEl = document.getElementById('moreRecentTasksContainer');
+        const moreListEl = document.getElementById('moreRecentTasksList');
 
-        if (!recentTasksCountEl || !recentTasksListEl) return;
+        if (!countEl || !listEl) return;
 
         const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
-
         const recentTasks = tasks
-            .filter(task => {
-                const timestamp = typeof task.createdAt === 'number'
-                    ? task.createdAt
-                    : parseInt(task.id, 10);
-                return !Number.isNaN(timestamp) && timestamp >= threeDaysAgo;
-            })
-            .sort((a, b) => {
-                const timeA = typeof a.createdAt === 'number' ? a.createdAt : parseInt(a.id, 10);
-                const timeB = typeof b.createdAt === 'number' ? b.createdAt : parseInt(b.id, 10);
-                return (timeB || 0) - (timeA || 0);
-            }); // Más recientes primero
+            .filter(t => t.createdAt >= threeDaysAgo)
+            .sort((a, b) => b.createdAt - a.createdAt);
 
-        recentTasksCountEl.textContent = recentTasks.length;
+        countEl.textContent = recentTasks.length;
+        listEl.innerHTML = '';
+        if (moreListEl) moreListEl.innerHTML = '';
 
-        // Limpiar listas
-        recentTasksListEl.innerHTML = '';
-        if (moreRecentTasksListEl) moreRecentTasksListEl.innerHTML = '';
+        recentTasks.slice(0, 3).forEach(task => listEl.appendChild(createTaskElement(task, false)));
 
-        // Renderizar hasta 3 tareas
-        const top3 = recentTasks.slice(0, 3);
-        top3.forEach(task => {
-            recentTasksListEl.appendChild(createTaskElement(task, false));
-        });
-
-        // Renderizar el resto si hay más de 3
         if (recentTasks.length > 3) {
-            moreRecentTasksContainerEl.classList.remove('hidden');
-            const restTasks = recentTasks.slice(3);
-            restTasks.forEach(task => {
-                moreRecentTasksListEl.appendChild(createTaskElement(task, false));
-            });
+            containerEl.classList.remove('hidden');
+            recentTasks.slice(3).forEach(task => moreListEl.appendChild(createTaskElement(task, false)));
         } else {
-            if (moreRecentTasksContainerEl) {
-                moreRecentTasksContainerEl.classList.add('hidden');
-            }
+            containerEl?.classList.add('hidden');
         }
     }
 
-    // 4. Añadir Tarea
-    taskForm.addEventListener('submit', (e) => {
+    taskForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const title = document.getElementById('newTaskTitle').value.trim();
+        const category = document.getElementById('newTaskCategory').value;
+        const priority = document.getElementById('newTaskPriority').value;
 
-        const titleInput = document.getElementById('newTaskTitle');
-        const categoryInput = document.getElementById('newTaskCategory');
-        const priorityInput = document.getElementById('newTaskPriority');
+        if (!title) return;
 
-        const newTask = {
-            id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(),
-            title: titleInput.value.trim(),
-            category: categoryInput.value,
-            priority: priorityInput.value,
-            completed: false,
-            createdAt: Date.now()
-        };
-
-        if (newTask.title !== '') {
+        try {
+            const newTask = await api.createTask({ title, category, priority });
             tasks.push(newTask);
-            saveTasks();
             renderTasks();
-
-            // Limpiar formulario
-            titleInput.value = '';
-            categoryInput.value = 'Trabajo';
-            priorityInput.value = 'Alta';
+            taskForm.reset();
+            showStatus('Tarea creada con éxito');
+        } catch (error) {
+            showStatus(error.message, 'error');
         }
     });
 
-    // 5. Interactuar con las Tareas (Editar / Eliminar / Completar)
-    function handleTaskInteraction(e) {
+    async function handleTaskInteraction(e) {
+        const taskId = e.target.closest('button, input')?.getAttribute('data-id');
+        if (!taskId) return;
+
         if (e.target.closest('.delete-btn')) {
-            const deleteBtn = e.target.closest('.delete-btn');
-            const taskId = deleteBtn.getAttribute('data-id');
-            tasks = tasks.filter(task => task.id !== taskId);
-            saveTasks();
-            renderTasks();
-        } else if (e.target.closest('.edit-btn')) {
-            const editBtn = e.target.closest('.edit-btn');
-            const taskId = editBtn.getAttribute('data-id');
-            const taskIndex = tasks.findIndex(task => task.id === taskId);
-            
-            if (taskIndex > -1) {
-                const currentTitle = tasks[taskIndex].title;
-                const newTitle = prompt('Edita el título de la tarea:', currentTitle);
-                
-                if (newTitle !== null && newTitle.trim() !== '') {
-                    tasks[taskIndex].title = newTitle.trim();
-                    saveTasks();
-                    renderTasks();
-                }
+            try {
+                await api.deleteTask(taskId);
+                tasks = tasks.filter(t => t.id !== taskId);
+                renderTasks();
+                showStatus('Tarea eliminada');
+            } catch (error) {
+                showStatus(error.message, 'error');
             }
         } else if (e.target.classList.contains('toggle-completed-btn')) {
-            const taskId = e.target.getAttribute('data-id');
-            const taskIndex = tasks.findIndex(task => task.id === taskId);
-            if (taskIndex > -1) {
-                tasks[taskIndex].completed = e.target.checked;
-                saveTasks();
+            // Note: The backend doesn't have a PATCH/PUT yet, so this only stays local
+            // until we refresh. This is a good point for future expansion.
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = e.target.checked;
                 renderTasks();
             }
         }
     }
 
     taskList.addEventListener('click', handleTaskInteraction);
-    if (recentTasksList) recentTasksList.addEventListener('click', handleTaskInteraction);
-    if (moreRecentTasksList) moreRecentTasksList.addEventListener('click', handleTaskInteraction);
+    [recentTasksList, moreRecentTasksList].forEach(el => el?.addEventListener('click', handleTaskInteraction));
 
-    // 6. Búsqueda por texto (Tiempo real)
-    searchInput.addEventListener('input', () => {
+    searchInput.addEventListener('input', renderTasks);
+
+    categoryFilters.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            categoryFilters.forEach(b => b.classList.remove('active', 'bg-blue-600', 'text-white'));
+            const target = e.target.closest('button');
+            target.classList.add('active', 'bg-blue-600', 'text-white');
+            currentFilter = target.getAttribute('data-category');
+            renderTasks();
+        });
+    });
+
+    statusFilters.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            statusFilters.forEach(b => b.classList.remove('active', 'bg-blue-600', 'text-white'));
+            const target = e.target.closest('button');
+            target.classList.add('active', 'bg-blue-600', 'text-white');
+            currentStatusFilter = target.getAttribute('data-status');
+            renderTasks();
+        });
+    });
+
+    clearAllBtn?.addEventListener('click', () => {
+        showStatus('Lógica de borrado masivo no implementada en API todavía', 'error');
+    });
+
+    completeAllBtn?.addEventListener('click', () => {
+        tasks.forEach(t => t.completed = true);
         renderTasks();
     });
 
-    // 7. Filtro por categorías
-    categoryFilters.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            // Actualizar botones activos quitando la clase de estado activo personalizada de UI Tailwind
-            categoryFilters.forEach(b => {
-                b.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-600');
-                b.classList.add('border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
-            });
-
-            // Establecer el estado activo del botón clickeado
-            const targetBtn = e.target.closest('button');
-            targetBtn.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-600');
-            targetBtn.classList.remove('border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
-
-            currentFilter = targetBtn.getAttribute('data-category');
-            renderTasks();
-        });
+    clearCompletedBtn?.addEventListener('click', () => {
+        showStatus('Lógica de borrado masivo no implementada en API todavía', 'error');
     });
-
-    // 8. Filtro por Estado
-    statusFilters.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            statusFilters.forEach(b => {
-                b.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-600');
-                b.classList.add('border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
-            });
-
-            const targetBtn = e.target.closest('button');
-            targetBtn.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-600');
-            targetBtn.classList.remove('border-slate-200', 'dark:border-slate-700', 'text-slate-700', 'dark:text-slate-300');
-
-            currentStatusFilter = targetBtn.getAttribute('data-status');
-            renderTasks();
-        });
-    });
-
-    // Iniciar con los filtros activos visualmente
-    document.querySelector('.filter-btn[data-category="Todas"]').click();
-    document.querySelector('.status-btn[data-status="Todos"]').click();
-
-    // 9. Borrar Todas las Tareas
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', () => {
-            if (tasks.length === 0) {
-                alert('No hay tareas para borrar.');
-                return;
-            }
-
-            if (confirm('¿Estás seguro de que quieres borrar TODAS las tareas? Esta acción no se puede deshacer.')) {
-                tasks = [];
-                saveTasks();
-                renderTasks();
-            }
-        });
-    }
-
-    // 10. Marcar todas como completadas
-    if (completeAllBtn) {
-        completeAllBtn.addEventListener('click', () => {
-            if (tasks.length === 0) return;
-            tasks.forEach(task => task.completed = true);
-            saveTasks();
-            renderTasks();
-        });
-    }
-
-    // 11. Borrar tareas completadas
-    if (clearCompletedBtn) {
-        clearCompletedBtn.addEventListener('click', () => {
-            const initialCount = tasks.length;
-            tasks = tasks.filter(task => !task.completed);
-            
-            if (tasks.length === initialCount) {
-                alert('No hay tareas completadas para borrar.');
-                return;
-            }
-
-            saveTasks();
-            renderTasks();
-        });
-    }
 
     loadTasks();
 });
