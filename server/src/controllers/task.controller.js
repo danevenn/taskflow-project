@@ -16,17 +16,15 @@ const createTask = (req, res) => {
     res.status(201).json(newTask);
 };
 
-const deleteTask = (req, res) => {
+const deleteTask = (req, res, next) => {
     const { id } = req.params;
 
     try {
         taskService.eliminarTarea(id);
         res.status(204).send();
     } catch (error) {
-        if (error.message === 'NOT_FOUND') {
-            return res.status(404).json({ error: 'Tarea no encontrada' });
-        }
-        res.status(500).json({ error: 'Internal Server Error' });
+        // Pasamos el error al middleware global
+        next(error);
     }
 };
 
