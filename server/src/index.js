@@ -64,3 +64,5 @@ app.use((err, req, res, next) => {
         message: 'Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo más tarde.'
     });
 });
+
+module.exports = app;
