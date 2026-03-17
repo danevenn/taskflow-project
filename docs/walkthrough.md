@@ -20,10 +20,11 @@ This document tracks the evolution and improvements made to the Taskflow Project
 - **Persistence**: Implemented LocalStorage storage for tasks and Dark Mode preferences using JSON serialization.
 - **Code Refactor**: Simplified DOM manipulation in `app.js` using modern template literals.
 
-### 4. Express Backend Setup
-- **Environment Safety**: Created a strict configuration module that validates the existence of environment variables (`PORT`) before starting.
-- **Development Workflow**: Configured Nodemon for automatic server restarts during development.
-- **Project Unification**: Consolidated all dependencies and scripts into a single root `package.json` for easier management.
+### 4. Layered Backend Architecture
+- **Task Service**: Implemented pure logic and in-memory persistence in `server/src/services/task.service.js`. Includes error handling for non-existent IDs.
+- **Task Controller**: Created `server/src/controllers/task.controller.js` to manage HTTP requests/responses, data validation (400 Bad Request), and proper status codes (201 Created, 204 No Content).
+- **Task Routes**: Defined API endpoints in `server/src/routes/task.routes.js` using Express Router.
+- **API Mounting**: The router is now mounted in `server/src/index.js` under the professional prefix `/api/v1/tasks`.
 
 ## Verification Results
 
