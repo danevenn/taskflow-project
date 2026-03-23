@@ -4,7 +4,7 @@
   "description": "Esta página web es un ejemplo de una página web con un listado de tareas.",
   "main": "app.js",
   "scripts": {
-    "build:css": "npx @tailwindcss/cli -i ./client/input.css -o ./client/style.css",
+    "build:css": "npx @tailwindcss/cli -i ./client/input.css -o ./client/style.css && sed -i '' '/vertical-align: middle;/d' ./client/style.css",
     "watch:css": "npx @tailwindcss/cli -i ./client/input.css -o ./client/style.css --watch",
     "server": "nodemon server/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"

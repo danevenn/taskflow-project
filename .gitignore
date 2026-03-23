@@ -13,6 +13,7 @@ Thumbs.db
 # Editors
 .vscode/
 .idea/
+.cursor/
 *.suo
 *.ntvs*
 *.njsproj
