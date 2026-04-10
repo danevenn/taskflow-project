@@ -28,8 +28,21 @@ const deleteTask = (req, res, next) => {
     }
 };
 
+const updateTask = (req, res, next) => {
+    const { id } = req.params;
+    const { title, category, priority, completed } = req.body;
+
+    try {
+        const updatedTask = taskService.actualizarTarea(id, { title, category, priority, completed });
+        res.json(updatedTask);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getTasks,
     createTask,
-    deleteTask
+    deleteTask,
+    updateTask
 };

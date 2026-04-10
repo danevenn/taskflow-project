@@ -35,3 +35,21 @@ export const deleteTask = async (id) => {
     }
     return true;
 };
+
+export const updateTask = async (id, taskData) => {
+    const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskData),
+    });
+    if (!response.ok) {
+        if (response.status === 404) {
+            throw new Error('Tarea no encontrada');
+        }
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al actualizar la tarea');
+    }
+    return response.json();
+};

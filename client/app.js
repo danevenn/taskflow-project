@@ -215,12 +215,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 showStatus(error.message, 'error');
             }
         } else if (e.target.classList.contains('toggle-completed-btn')) {
-            // Note: The backend doesn't have a PATCH/PUT yet, so this only stays local
-            // until we refresh. This is a good point for future expansion.
-            const task = tasks.find(t => t.id === taskId);
-            if (task) {
-                task.completed = e.target.checked;
-                renderTasks();
+            const isCompleted = e.target.checked;
+            try {
+                await api.updateTask(taskId, { completed: isCompleted });
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = isCompleted;
+                    renderTasks();
+                }
+            } catch (error) {
+                e.target.checked = !isCompleted; // Revert checkbox if failed
+                showStatus(error.message, 'error');
             }
         }
     }

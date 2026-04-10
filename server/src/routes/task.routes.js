@@ -104,6 +104,64 @@ router.post('/', taskController.createTask);
  *       404:
  *         description: Tarea no encontrada
  */
+/**
+ * @swagger
+ * /api/v1/tasks/{id}:
+ *   patch:
+ *     summary: Actualiza parcialmente una tarea por su ID
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la tarea a actualizar
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               priority:
+ *                 type: string
+ *               completed:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Tarea actualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       404:
+ *         description: Tarea no encontrada
+ */
+router.patch('/:id', taskController.updateTask);
+
+/**
+ * @swagger
+ * /api/v1/tasks/{id}:
+ *   delete:
+ *     summary: Elimina una tarea por su ID
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la tarea a eliminar
+ *     responses:
+ *       204:
+ *         description: Tarea eliminada correctamente (sin contenido)
+ *       404:
+ *         description: Tarea no encontrada
+ */
 router.delete('/:id', taskController.deleteTask);
 
 module.exports = router;
