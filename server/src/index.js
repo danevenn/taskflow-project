@@ -38,9 +38,11 @@ app.get('/', (req, res) => {
     res.json({ message: 'Taskflow API is running' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Servidor ejecutándose en el puerto ${PORT}`);
+    });
+}
 
 // Middleware Global de Manejo de Errores
 app.use((err, req, res, next) => {
@@ -62,3 +64,5 @@ app.use((err, req, res, next) => {
         message: 'Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo más tarde.'
     });
 });
+
+module.exports = app;

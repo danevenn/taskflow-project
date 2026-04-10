@@ -49,6 +49,11 @@ This document tracks the evolution and improvements made to the Taskflow Project
 - **Colección de Pruebas**: Creada una colección JSON en `docs/api-tests/` compatible con Postman y Thunder Client. Incluye pruebas específicas para forzar errores **400 (Bad Request)**, **404 (Not Found)** y verificar la estructura de respuesta.
 - **README Enriquecido**: El `README.md` raíz ahora contiene una sección detallada con ejemplos reales de JSON para cada petición y respuesta, incluyendo los esquemas de error.
 
+### 9. Distribución y Despliegue (Branching & Vercel)
+- **Nueva Rama `taskflow-api`**: Creada y publicada una rama dedicada para la versión con API profesional.
+- **Configuración Vercel**: Creado un archivo `vercel.json` que unifica el despliegue del frontend estático y el backend de Node.js como Serverless Functions.
+- **Compatibilidad Serverless**: Refactorizado el punto de entrada del servidor (`index.js`) para exportar la instancia de Express, garantizando que Vercel pueda consumirla correctamente mientras se mantiene el soporte local.
+
 ## Verification Results
 
 - [x] Bidirectional synchronization between lists verified.
