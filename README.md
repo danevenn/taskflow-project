@@ -56,6 +56,11 @@ taskflow-project/
 Si el servidor está corriendo, puedes acceder a la documentación interactiva (Swagger) en:
 `http://localhost:3000/api-docs`
 
+## 📖 Documentación Adicional
+
+Para detalles técnicos extendidos sobre herramientas (Axios, Postman, Sentry), estándares de la API y manejo de errores, consulta:
+- [Documentación Técnica del Backend](docs/backend-api.md)
+
 ---
 
 ## 🛠️ Ejemplos de Interacción (Request/Response)
