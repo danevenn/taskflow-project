@@ -255,8 +255,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    clearAllBtn?.addEventListener('click', () => {
-        showStatus('Lógica de borrado masivo no implementada en API todavía', 'error');
+    clearAllBtn?.addEventListener('click', async () => {
+        if (!confirm('¿Estás seguro de que quieres borrar TODAS las tareas?')) return;
+        try {
+            await api.deleteTasks(false);
+            tasks = [];
+            renderTasks();
+            showStatus('Todas las tareas han sido eliminadas');
+        } catch (error) {
+            showStatus(error.message, 'error');
+        }
     });
 
     completeAllBtn?.addEventListener('click', () => {
@@ -264,8 +272,16 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTasks();
     });
 
-    clearCompletedBtn?.addEventListener('click', () => {
-        showStatus('Lógica de borrado masivo no implementada en API todavía', 'error');
+    clearCompletedBtn?.addEventListener('click', async () => {
+        if (!confirm('¿Estás seguro de que quieres borrar las tareas completadas?')) return;
+        try {
+            await api.deleteTasks(true);
+            tasks = tasks.filter(t => !t.completed);
+            renderTasks();
+            showStatus('Tareas completadas eliminadas');
+        } catch (error) {
+            showStatus(error.message, 'error');
+        }
     });
 
     loadTasks();

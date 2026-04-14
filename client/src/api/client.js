@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/v1/tasks';
+const API_URL = '/api/v1/tasks';
 
 export const getTasks = async () => {
     const response = await fetch(API_URL);
@@ -52,4 +52,15 @@ export const updateTask = async (id, taskData) => {
         throw new Error(errorData.error || 'Error al actualizar la tarea');
     }
     return response.json();
+};
+
+export const deleteTasks = async (completedOnly = false) => {
+    const url = completedOnly ? `${API_URL}?completedOnly=true` : API_URL;
+    const response = await fetch(url, {
+        method: 'DELETE',
+    });
+    if (!response.ok) {
+        throw new Error('Error al realizar el borrado masivo');
+    }
+    return true;
 };

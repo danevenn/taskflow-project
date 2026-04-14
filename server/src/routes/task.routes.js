@@ -87,6 +87,24 @@ router.post('/', taskController.createTask);
 
 /**
  * @swagger
+ * /api/v1/tasks:
+ *   delete:
+ *     summary: Elimina múltiples tareas (todas o solo completadas)
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: query
+ *         name: completedOnly
+ *         schema:
+ *           type: boolean
+ *         description: Si es true, solo elimina las tareas completadas. Si es false o no está, elimina todas.
+ *     responses:
+ *       204:
+ *         description: Tareas eliminadas correctamente
+ */
+router.delete('/', taskController.deleteTasks);
+
+/**
+ * @swagger
  * /api/v1/tasks/{id}:
  *   delete:
  *     summary: Elimina una tarea por su ID

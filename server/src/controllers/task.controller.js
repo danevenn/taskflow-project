@@ -40,9 +40,21 @@ const updateTask = (req, res, next) => {
     }
 };
 
+const deleteTasks = (req, res, next) => {
+    const { completedOnly } = req.query;
+
+    try {
+        taskService.eliminarTareas({ completedOnly: completedOnly === 'true' });
+        res.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getTasks,
     createTask,
     deleteTask,
-    updateTask
+    updateTask,
+    deleteTasks
 };

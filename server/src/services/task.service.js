@@ -61,9 +61,22 @@ const actualizarTarea = (id, data) => {
     return updatedTask;
 };
 
+const eliminarTareas = (filtros = {}) => {
+    let tasks = leerTareas();
+    
+    if (filtros.completedOnly) {
+        tasks = tasks.filter(task => !task.completed);
+    } else {
+        tasks = [];
+    }
+    
+    guardarTareas(tasks);
+};
+
 module.exports = {
     obtenerTodas,
     crearTarea,
     eliminarTarea,
-    actualizarTarea
+    actualizarTarea,
+    eliminarTareas
 };
